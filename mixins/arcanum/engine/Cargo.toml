@@ -1,0 +1,16 @@
+[package]
+name = "arcanum-engine"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.90"
+license = "MIT"
+description = "Game logic for Arcanum, the Horizon magic mod: mana, spells, casting and progression."
+repository = "https://github.com/horizon-rust/arcanum-horizon"
+
+[lib]
+name = "arcanum_engine"
+path = "src/lib.rs"
+
+# No dependencies on purpose: horizon-mixins only accepts registry crates that
+# already exist in Horizon's Cargo.lock, and the engine needs none of them.
+[dependencies]

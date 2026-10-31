@@ -1,0 +1,163 @@
+# Arcanum's horizon-mixins bundle: one support module, one crate for the game
+# logic, and one HEAD hook per stable hook point (docs/native-mods.md).
+[mod]
+id = "arcanum"
+version = "0.1.0"
+priority = 100
+
+[compatibility]
+# The Horizon commit this bundle was audited against (see compatibility.json).
+horizon_revision = "83e9b542b89f78a523115252c9a81e9916611788"
+
+# `runtime.rs` is injected into the game module as `crate::game::arcanum`.
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "arcanum"
+source = "runtime.rs"
+
+# The heavy logic, staged as a workspace member. It has no dependencies, so it
+# needs nothing from Horizon's Cargo.lock.
+[[crate]]
+id = "engine"
+path = "engine"
+
+[[injection]]
+id = "hud"
+hook = "hud"
+hook_version = 1
+kind = "HEAD"
+helper = "hud.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "batch", ty = "&mut crate::hud::HudBatch", value = "batch" },
+  { name = "corners", ty = "&mut crate::extras_hud::Corners", value = "corners" },
+]
+
+[[injection]]
+id = "key"
+hook = "key"
+hook_version = 1
+kind = "HEAD"
+helper = "key.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "key", ty = "&str", value = "key" },
+  { name = "pressed", ty = "bool", value = "pressed" },
+]
+
+[[injection]]
+id = "tick"
+hook = "tick"
+hook_version = 1
+kind = "HEAD"
+helper = "tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "player_tick"
+hook = "player_tick"
+hook_version = 1
+kind = "HEAD"
+helper = "player_tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "net_from_client"
+hook = "net_from_client"
+hook_version = 1
+kind = "HEAD"
+helper = "net_from_client.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "player", ty = "u128", value = "player" },
+  { name = "channel", ty = "&str", value = "channel" },
+  { name = "data", ty = "&[u8]", value = "data" },
+]
+
+[[injection]]
+id = "net_from_server"
+hook = "net_from_server"
+hook_version = 1
+kind = "HEAD"
+helper = "net_from_server.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "channel", ty = "&str", value = "channel" },
+  { name = "data", ty = "&[u8]", value = "data" },
+]
+
+[[injection]]
+id = "register_commands"
+hook = "register_commands"
+hook_version = 1
+kind = "HEAD"
+helper = "register_commands.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "commands", ty = "&mut Vec<crate::game::native_server::NativeCommand>", value = "commands" },
+]
+
+[[injection]]
+id = "perform_command"
+hook = "perform_command"
+hook_version = 1
+kind = "HEAD"
+helper = "perform_command.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "player", ty = "&crate::game::native_server::NativeServerPlayer", value = "player" },
+  { name = "command", ty = "&str", value = "command" },
+  { name = "ran", ty = "&mut bool", value = "ran" },
+]
+
+[[injection]]
+id = "mods"
+hook = "mods"
+hook_version = 1
+kind = "HEAD"
+helper = "mods.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mods", ty = "&mut Vec<crate::game::native_hooks::NativeMod>", value = "mods" },
+]
+
+[[injection]]
+id = "settings"
+hook = "settings"
+hook_version = 1
+kind = "HEAD"
+helper = "settings.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "buttons", ty = "&mut Vec<String>", value = "buttons" },
+]
+
+[[injection]]
+id = "settings_click"
+hook = "settings_click"
+hook_version = 1
+kind = "HEAD"
+helper = "settings_click.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "button", ty = "usize", value = "button" },
+]
+
+[[injection]]
+id = "player_died"
+hook = "player_died"
+hook_version = 1
+kind = "HEAD"
+helper = "player_died.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "player", ty = "u128", value = "player" },
+  { name = "cause", ty = "Option<&str>", value = "cause" },
+]

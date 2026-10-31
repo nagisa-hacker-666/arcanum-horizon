@@ -1,0 +1,10 @@
+[workspace]
+members = ["mixins/arcanum/engine"]
+resolver = "2"
+
+# The mod itself is a horizon-mixins bundle (mixins/arcanum), staged into
+# Horizon by the launcher. This workspace exists so the bundle's engine crate
+# can be built and tested on its own, without a Horizon checkout.
+[profile.release]
+lto = "thin"
+codegen-units = 1

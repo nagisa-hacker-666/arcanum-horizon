@@ -1,0 +1,8 @@
+/target
+**/target
+# Local audit checkouts of Horizon and horizon-mixins (never shipped)
+.audit/
+.local/
+*.hnmod
+*.hmod
+.DS_Store
